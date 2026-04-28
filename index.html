@@ -7,285 +7,201 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
-        body { background-color: #080f1e; color: #f0f4ff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; position: relative; }
-
-        /* 背景流光效果 */
-        body::before {
-            content: '';
-            position: fixed; inset: 0; z-index: 0;
+        body { 
+            background-color: #080f1e; 
+            color: #f0f4ff; 
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        /* 背景流光 - 確保 z-index 在最底層 */
+        .bg-aurora {
+            position: fixed; inset: 0; z-index: -1;
             background:
-                radial-gradient(ellipse 60% 40% at 20% 10%, rgba(56,189,248,0.08) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(129,140,248,0.07) 0%, transparent 70%);
-            pointer-events: none;
+                radial-gradient(ellipse 60% 40% at 20% 10%, rgba(56,189,248,0.1) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(129,140,248,0.1) 0%, transparent 70%);
         }
-
-        .wrap { position: relative; z-index: 1; }
-        .glass { background: rgba(15, 25, 50, 0.65); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.07); }
-        .glass-bright { background: rgba(20, 32, 65, 0.80); backdrop-filter: blur(20px); border: 1px solid rgba(56,189,248,0.15); }
-        .gradient-text { background: linear-gradient(95deg, #38bdf8 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-
-        /* 人格選擇器 */
-        .persona-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
-        .persona-btn {
-            cursor: pointer; border-radius: 12px; padding: 10px 6px;
-            border: 1.5px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.03);
-            text-align: center; font-size: 11px; color: #94a3b8;
-            transition: all 0.25s;
-        }
-        .persona-btn:hover { border-color: rgba(56,189,248,0.4); color: #e2e8f0; background: rgba(56,189,248,0.06); }
-        .persona-btn.active { border-color: #38bdf8; background: rgba(56,189,248,0.12); color: #7dd3fc; }
-        .persona-btn .icon { font-size: 22px; display: block; margin-bottom: 4px; }
-        .persona-btn .name { font-weight: 600; display: block; margin-bottom: 2px; font-size: 12px; }
-
-        /* API Key 區塊 */
-        .key-row { display: flex; gap: 6px; align-items: center; }
-        .key-input {
-            flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; padding: 8px 12px; color: #e2e8f0; font-size: 12px;
-            font-family: monospace; transition: border-color 0.2s;
-        }
-        .key-input:focus { outline: none; border-color: #38bdf8; }
-        .btn-verify {
-            background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.3);
-            color: #7dd3fc; border-radius: 10px; padding: 8px 14px;
-            font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.2s;
-        }
-        .btn-verify:hover { background: rgba(56,189,248,0.25); }
-        .key-status { margin-top: 6px; font-size: 11px; border-radius: 8px; padding: 6px 10px; display: none; }
-        .key-ok { display: block; background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
-        .key-err { display: block; background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
-        .key-loading { display: block; background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08); }
-
-        /* 聊天區 */
-        .chat-area {
-            height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-            padding: 4px 2px; scrollbar-width: thin; scrollbar-color: rgba(56,189,248,0.2) transparent;
-        }
-        .bubble-ai {
-            align-self: flex-start; max-width: 85%;
-            background: rgba(30,41,80,0.9); border: 1px solid rgba(56,189,248,0.15);
-            border-radius: 4px 16px 16px 16px; padding: 10px 14px;
-            font-size: 13px; color: #cbd5e1; line-height: 1.6;
-            animation: fadeInUp 0.3s ease;
-        }
-        .bubble-user {
-            align-self: flex-end; max-width: 85%;
-            background: linear-gradient(135deg, #1e40af, #1e3a8a);
-            border: 1px solid rgba(99,102,241,0.3);
-            border-radius: 16px 4px 16px 16px; padding: 10px 14px;
-            font-size: 13px; color: #e0e7ff; line-height: 1.6;
-            animation: fadeInUp 0.3s ease;
-        }
-        .bubble-system { align-self: center; font-size: 11px; color: #475569; background: rgba(255,255,255,0.03); border-radius: 99px; padding: 4px 12px; }
-
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 打字動畫 */
-        .typing-dots { display: inline-flex; gap: 4px; align-items: center; padding: 4px 0; }
-        .typing-dots span { width: 6px; height: 6px; border-radius: 50%; background: #38bdf8; opacity: 0.6; animation: dot-bounce 1.2s infinite ease-in-out; }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes dot-bounce { 0%,80%,100% { transform: translateY(0); opacity:0.4; } 40% { transform: translateY(-5px); opacity:1; } }
-
-        .chat-input { flex: 1; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 10px 14px; color: #e2e8f0; font-size: 13px; }
-        .chat-input:focus { outline: none; border-color: rgba(56,189,248,0.5); }
-        .btn-send { background: linear-gradient(135deg, #0284c7, #4338ca); border: none; border-radius: 12px; padding: 10px 18px; color: #fff; cursor: pointer; transition: all 0.2s; }
-        .btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
-        .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 12px 0; }
-
-        /* 頭像光圈 */
-        .avatar-wrap { position: relative; display: inline-block; }
-        .avatar-wrap::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid rgba(56,189,248,0.3); animation: pulse-ring 2.5s infinite; }
+        .glass { background: rgba(15, 25, 50, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+        .glass-bright { background: rgba(20, 32, 65, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(56,189,248,0.2); }
+        .gradient-text { background: linear-gradient(95deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* 聊天室美化 */
+        .chat-area { height: 300px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #38bdf8 rgba(255,255,255,0.05); }
+        .bubble-ai { align-self: flex-start; background: rgba(30,41,80,0.9); border-radius: 4px 16px 16px 16px; border: 1px solid rgba(56,189,248,0.2); }
+        .bubble-user { align-self: flex-end; background: linear-gradient(135deg, #1e40af, #1e3a8a); border-radius: 16px 4px 16px 16px; }
+        
+        /* 人格按鈕 */
+        .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .persona-btn { cursor: pointer; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .persona-btn.active { border-color: #38bdf8; background: rgba(56,189,248,0.15); color: #7dd3fc; }
+        
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 0; } 100% { transform: scale(1.1); opacity: 0; } }
-        .tag { display: inline-block; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2); color: #7dd3fc; border-radius: 99px; font-size: 11px; padding: 2px 10px; }
+        .animate-ring { animation: pulse-ring 2.5s infinite; }
     </style>
 </head>
 <body class="p-4 md:p-10">
-<div class="wrap max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-
-    <div class="md:col-span-1 space-y-5">
-        <div class="glass p-6 rounded-2xl text-center">
-            <div class="avatar-wrap mx-auto mb-5">
-                <div class="w-24 h-24 rounded-full flex items-center justify-center text-2xl font-bold" style="background: linear-gradient(135deg,#0ea5e9,#6366f1);">
-                    <i class="fas fa-user-graduate" style="font-size:36px;color:#fff;"></i>
-                </div>
-            </div>
-            <h1 class="text-xl font-bold mb-1">教育與 AI 專家</h1>
-            <p style="color:#38bdf8;font-size:13px;" class="mb-4">法政碩士 ｜ AI 閱卷顧問</p>
-            <div class="flex justify-center gap-3 flex-wrap">
-                <span class="tag"><i class="fab fa-linkedin mr-1"></i>LinkedIn</span>
-                <span class="tag"><i class="fas fa-envelope mr-1"></i>Email</span>
-            </div>
-        </div>
-
-        <div class="glass p-5 rounded-2xl">
-            <h2 style="font-size:14px;font-weight:600;color:#94a3b8;letter-spacing:0.05em;" class="mb-3 uppercase">專業領域</h2>
-            <ul class="space-y-2" style="font-size:13px;color:#cbd5e1;">
-                <li><span style="color:#38bdf8;">▹</span> 八年高中教學實務</li>
-                <li><span style="color:#818cf8;">▹</span> LLM 訓練與 RLHF 優化</li>
-                <li><span style="color:#38bdf8;">▹</span> 法政邏輯與跨域整合</li>
-                <li><span style="color:#818cf8;">▹</span> 健體訓練與自律管理</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="md:col-span-2 space-y-5">
-        <div class="glass p-7 rounded-2xl">
-            <h2 class="text-3xl font-bold mb-4 gradient-text" style="font-family:Georgia,serif;">跨域領航者：關於我</h2>
-            <div style="font-size:14px;color:#94a3b8;line-height:1.9;" class="space-y-3">
-                <p>我是一位深耕教育現場八年的資深高中教師，致力於將嚴謹的<span style="color:#e2e8f0;font-weight:600;">法政邏輯</span>與尖端的 <span style="color:#e2e8f0;font-weight:600;">AI 科技</span>結合。目前擔任教育部 AI 閱卷專案顧問，協助優化大型語言模型在學術評量上的表現。</p>
-                <p>我擅長運用 Firebase 與 Gemini API 開發教育工具；在生活端，七年的健體訓練資歷賦予我強大的執行力與自律心。</p>
-            </div>
-        </div>
-
-        <div class="glass-bright p-6 rounded-2xl" style="border-top: 2px solid rgba(56,189,248,0.3);">
-            <div class="flex items-center gap-2 mb-4">
-                <div style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></div>
-                <span style="font-size:13px;font-weight:600;color:#7dd3fc;">AI 助理對話介面 (Powered by Gemini 1.5 Flash)</span>
-            </div>
-
-            <div style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:8px;">STEP 1 — 選擇 AI 個性</div>
-            <div class="persona-grid" id="personaGrid">
-                <div class="persona-btn active" data-role="mentor" onclick="selectPersona(this)">
-                    <span class="icon">🎓</span><span class="name">智慧導師</span><span>專業深度</span>
-                </div>
-                <div class="persona-btn" data-role="friend" onclick="selectPersona(this)">
-                    <span class="icon">☕</span><span class="name">輕鬆朋友</span><span>親切幽默</span>
-                </div>
-                <div class="persona-btn" data-role="socrates" onclick="selectPersona(this)">
-                    <span class="icon">🏛</span><span class="name">蘇格拉底</span><span>反問引導</span>
-                </div>
-                <div class="persona-btn" data-role="poet" onclick="selectPersona(this)">
-                    <span class="icon">🌸</span><span class="name">浪漫詩人</span><span>押韻感性</span>
-                </div>
-                <div class="persona-btn" data-role="coach" onclick="selectPersona(this)">
-                    <span class="icon">💪</span><span class="name">健體教練</span><span>激勵直白</span>
-                </div>
-                <div class="persona-btn" data-role="legal" onclick="selectPersona(this)">
-                    <span class="icon">⚖️</span><span class="name">法律顧問</span><span>嚴謹邏輯</span>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:8px;">STEP 2 — 輸入 Gemini API Key</div>
-            <div class="key-row">
-                <input type="password" id="apiKey" class="key-input" placeholder="AIza…" />
-                <button class="btn-verify" id="verifyBtn" onclick="verifyKey()">驗證</button>
-            </div>
-            <div id="keyStatus" class="key-status"></div>
-
-            <div class="divider"></div>
-
-            <div style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:10px;">STEP 3 — 開始提問</div>
-            <div class="chat-area" id="chatArea">
-                <div class="bubble-system">請先驗證 API Key 以開啟對話</div>
-            </div>
-            <div class="send-row flex gap-2 mt-4">
-                <input type="text" id="chatInput" class="chat-input" placeholder="問問關於我的專案..." disabled onkeydown="if(event.key==='Enter')sendMsg()" />
-                <button class="btn-send" id="sendBtn" onclick="sendMsg()" disabled><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-const personas = {
-    mentor: "你是網頁主人的 AI 助理。主人是有八年經驗的高中老師、法政碩士、教育部 AI 閱卷顧問。請以專業、有深度的智慧導師風格回答。繁體中文。",
-    friend: "你是網頁主人的 AI 助理，用輕鬆、親切、幽默的朋友口吻介紹主人。繁體中文，語氣像聊天。",
-    socrates: "你是蘇格拉底風格的 AI 助理：不直接給答案，只用反問句引導訪客思考主人的專業。繁體中文。",
-    poet: "你是浪漫詩人 AI 助理，回答必須押韻，充滿比喻，介紹主人的教育與 AI 專業。繁體中文。",
-    coach: "你是激勵型健體教練風格的 AI 助理：直白、有力，多用驚嘆號，強調主人的自律。繁體中文。",
-    legal: "你是嚴謹法律顧問 AI 助理，引用邏輯框架與條理分明的論述介紹主人。繁體中文。"
-};
-
-let currentPersona = 'mentor';
-let verified = false;
-
-function selectPersona(el) {
-    document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    currentPersona = el.dataset.role;
-}
-
-function setStatus(cls, html) {
-    const el = document.getElementById('keyStatus');
-    el.className = 'key-status ' + cls;
-    el.innerHTML = html;
-}
-
-async function verifyKey() {
-    const key = document.getElementById('apiKey').value.trim();
-    if (!key) { setStatus('key-err', '請輸入 Key'); return; }
-    document.getElementById('verifyBtn').disabled = true;
-    setStatus('key-loading', '⏳ 驗證中...');
-    try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ contents:[{parts:[{text:'hi'}]}], generationConfig:{maxOutputTokens:5} })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error.message);
-        verified = true;
-        setStatus('key-ok', '✓ 驗證成功！');
-        document.getElementById('chatInput').disabled = false;
-        document.getElementById('sendBtn').disabled = false;
-        document.getElementById('chatArea').innerHTML = "";
-        addBubble('ai', '你好！我是 AI 助理，已準備好為你服務。');
-    } catch(e) {
-        setStatus('key-err', '✗ 失敗：' + (e.message.includes('quota') ? '配額不足，請換個帳號申請 Key。' : e.message));
-    } finally { document.getElementById('verifyBtn').disabled = false; }
-}
-
-function addBubble(role, text) {
-    const area = document.getElementById('chatArea');
-    const div = document.createElement('div');
-    div.className = role === 'user' ? 'bubble-user' : 'bubble-ai';
-    div.textContent = text;
-    area.appendChild(div);
-    area.scrollTop = area.scrollHeight;
-}
-
-async function sendMsg() {
-    if (!verified) return;
-    const key = document.getElementById('apiKey').value.trim();
-    const text = document.getElementById('chatInput').value.trim();
-    if (!text) return;
-    document.getElementById('chatInput').value = '';
-    addBubble('user', text);
+    <div class="bg-aurora"></div>
     
-    // 顯示打字中
-    const area = document.getElementById('chatArea');
-    const typing = document.createElement('div');
-    typing.className = 'bubble-ai';
-    typing.id = 'typing';
-    typing.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
-    area.appendChild(typing);
-    area.scrollTop = area.scrollHeight;
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10">
+        
+        <div class="md:col-span-4 space-y-6">
+            <div class="glass p-8 rounded-3xl text-center">
+                <div class="relative inline-block mb-6">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                        <i class="fas fa-user-graduate text-4xl"></i>
+                    </div>
+                    <div class="absolute inset-[-6px] border-2 border-sky-500/30 rounded-full animate-ring"></div>
+                </div>
+                <h1 class="text-2xl font-bold mb-1">教育與 AI 專家</h1>
+                <p class="text-sky-400 text-sm mb-6">法政碩士 ｜ AI 閱卷顧問</p>
+                <div class="flex justify-center gap-3">
+                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10 hover:bg-white/10">LinkedIn</button>
+                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10 hover:bg-white/10">Email</button>
+                </div>
+            </div>
 
-    try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-        const res = await fetch(url, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({
-                contents: [{role:'user', parts:[{text}]}],
-                systemInstruction: { parts:[{text: personas[currentPersona]}] }
-            })
-        });
-        const data = await res.json();
-        document.getElementById('typing').remove();
-        if (data.error) throw new Error(data.error.message);
-        addBubble('ai', data.candidates[0].content.parts[0].text);
-    } catch(e) {
-        if(document.getElementById('typing')) document.getElementById('typing').remove();
-        addBubble('ai', '⚠ 錯誤：' + e.message);
-    }
-}
-</script>
+            <div class="glass p-6 rounded-3xl">
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">專業領域</h2>
+                <ul class="space-y-3 text-sm text-slate-300">
+                    <li><span class="text-sky-500 mr-2">▹</span> 八年高中教學實務</li>
+                    <li><span class="text-indigo-400 mr-2">▹</span> LLM 訓練與 RLHF 優化</li>
+                    <li><span class="text-sky-500 mr-2">▹</span> 法政邏輯與跨域整合</li>
+                    <li><span class="text-indigo-400 mr-2">▹</span> 健體訓練與自律管理</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="md:col-span-8 space-y-6">
+            <div class="glass p-8 rounded-3xl">
+                <h2 class="text-4xl font-bold mb-6 gradient-text">關於我</h2>
+                <div class="text-slate-400 leading-loose space-y-4">
+                    <p>我是一位深耕教育現場八年的資深高中教師，致力於將嚴謹的<strong class="text-slate-200">法政邏輯</strong>與尖端的 <strong class="text-slate-200">AI 科技</strong>結合。目前擔任教育部 AI 閱卷專案顧問，協助優化大型語言模型在學術評量上的表現。</p>
+                </div>
+            </div>
+
+            <div class="glass-bright p-8 rounded-3xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
+                    <span class="text-sm font-bold text-sky-300 tracking-wider">AI 助理對話介面 (Gemini 1.5 Flash)</span>
+                </div>
+
+                <div class="text-[10px] text-slate-500 font-bold tracking-tighter mb-3">STEP 1 — 選擇 AI 個性</div>
+                <div class="persona-grid mb-8" id="personaGrid">
+                    <div class="persona-btn active p-3 text-center" data-role="mentor" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">🎓</div><div class="text-xs font-bold">智慧導師</div>
+                    </div>
+                    <div class="persona-btn p-3 text-center" data-role="friend" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">☕</div><div class="text-xs font-bold">輕鬆朋友</div>
+                    </div>
+                    <div class="persona-btn p-3 text-center" data-role="coach" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">💪</div><div class="text-xs font-bold">健體教練</div>
+                    </div>
+                </div>
+
+                <div class="text-[10px] text-slate-500 font-bold mb-3">STEP 2 — 輸入 API Key</div>
+                <div class="flex gap-2 mb-2">
+                    <input type="password" id="apiKey" class="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-sky-500 outline-none" placeholder="AIza...">
+                    <button id="verifyBtn" onclick="verifyKey()" class="bg-sky-500/20 border border-sky-500/40 text-sky-300 px-6 py-2 rounded-xl text-sm hover:bg-sky-500/30 transition">驗證</button>
+                </div>
+                <div id="keyStatus" class="text-[11px] hidden px-3 py-1.5 rounded-lg mb-6"></div>
+
+                <div class="text-[10px] text-slate-500 font-bold mb-3">STEP 3 — 開始提問</div>
+                <div id="chatArea" class="chat-area flex flex-col gap-4 p-2 mb-4">
+                    <div class="self-center text-[11px] text-slate-600 bg-white/5 px-4 py-1 rounded-full">請先完成 API Key 驗證</div>
+                </div>
+                
+                <div class="flex gap-2">
+                    <input type="text" id="chatInput" disabled onkeydown="if(event.key==='Enter')sendMsg()" class="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-sky-500 outline-none disabled:opacity-30" placeholder="輸入訊息...">
+                    <button id="sendBtn" disabled onclick="sendMsg()" class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-6 rounded-xl disabled:opacity-30"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const personas = {
+            mentor: "你是網頁主人的 AI 助理。主人是高中老師、法政碩士、AI 閱卷顧問。請以專業、有深度的導師風格回答。繁體中文。",
+            friend: "你是網頁主人的 AI 助理，用輕鬆、幽默的朋友口吻介紹主人。繁體中文。",
+            coach: "你是激勵型健體教練風格的 AI 助理：直白、有力，強調自律。繁體中文。"
+        };
+
+        let currentPersona = 'mentor';
+        let verified = false;
+
+        function selectPersona(el) {
+            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            currentPersona = el.dataset.role;
+        }
+
+        async function verifyKey() {
+            const key = document.getElementById('apiKey').value.trim();
+            const status = document.getElementById('keyStatus');
+            if(!key) return;
+            
+            status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-white/5 text-slate-400";
+            status.innerText = "⏳ 驗證中...";
+            
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({ contents:[{parts:[{text:'hi'}]}], generationConfig:{maxOutputTokens:5} })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message);
+                
+                verified = true;
+                status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                status.innerText = "✓ 驗證成功！";
+                document.getElementById('chatInput').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('chatArea').innerHTML = "";
+                addBubble('ai', '你好！我是你的 AI 助理，請問有什麼我可以幫你的？');
+            } catch(e) {
+                status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-red-500/10 text-red-400 border border-red-500/20";
+                status.innerText = "✗ 失敗：" + e.message;
+            }
+        }
+
+        function addBubble(role, text) {
+            const area = document.getElementById('chatArea');
+            const div = document.createElement('div');
+            div.className = `p-4 text-sm leading-relaxed ${role === 'user' ? 'bubble-user text-white' : 'bubble-ai text-slate-300'}`;
+            div.textContent = text;
+            area.appendChild(div);
+            area.scrollTop = area.scrollHeight;
+        }
+
+        async function sendMsg() {
+            if(!verified) return;
+            const key = document.getElementById('apiKey').value.trim();
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            input.value = "";
+            addBubble('user', text);
+            
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+                const res = await fetch(url, {
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({
+                        contents: [{role:'user', parts:[{text}]}],
+                        systemInstruction: { parts:[{text: personas[currentPersona]}] }
+                    })
+                });
+                const data = await res.json();
+                if(data.error) throw new Error(data.error.message);
+                addBubble('ai', data.candidates[0].content.parts[0].text);
+            } catch(e) {
+                addBubble('ai', "錯誤：" + e.message);
+            }
+        }
+    </script>
 </body>
 </html>
