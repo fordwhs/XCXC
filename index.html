@@ -15,7 +15,6 @@
             padding: 0;
             min-height: 100vh;
         }
-        /* 背景流光 - 確保 z-index 在最底層 */
         .bg-aurora {
             position: fixed; inset: 0; z-index: -1;
             background:
@@ -25,17 +24,12 @@
         .glass { background: rgba(15, 25, 50, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
         .glass-bright { background: rgba(20, 32, 65, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(56,189,248,0.2); }
         .gradient-text { background: linear-gradient(95deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* 聊天室美化 */
         .chat-area { height: 300px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #38bdf8 rgba(255,255,255,0.05); }
         .bubble-ai { align-self: flex-start; background: rgba(30,41,80,0.9); border-radius: 4px 16px 16px 16px; border: 1px solid rgba(56,189,248,0.2); }
         .bubble-user { align-self: flex-end; background: linear-gradient(135deg, #1e40af, #1e3a8a); border-radius: 16px 4px 16px 16px; }
-        
-        /* 人格按鈕 */
         .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .persona-btn { cursor: pointer; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
         .persona-btn.active { border-color: #38bdf8; background: rgba(56,189,248,0.15); color: #7dd3fc; }
-        
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 0; } 100% { transform: scale(1.1); opacity: 0; } }
         .animate-ring { animation: pulse-ring 2.5s infinite; }
     </style>
@@ -44,11 +38,10 @@
     <div class="bg-aurora"></div>
     
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10">
-        
         <div class="md:col-span-4 space-y-6">
             <div class="glass p-8 rounded-3xl text-center">
                 <div class="relative inline-block mb-6">
-                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
                         <i class="fas fa-user-graduate text-4xl"></i>
                     </div>
                     <div class="absolute inset-[-6px] border-2 border-sky-500/30 rounded-full animate-ring"></div>
@@ -56,8 +49,8 @@
                 <h1 class="text-2xl font-bold mb-1">教育與 AI 專家</h1>
                 <p class="text-sky-400 text-sm mb-6">法政碩士 ｜ AI 閱卷顧問</p>
                 <div class="flex justify-center gap-3">
-                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10 hover:bg-white/10">LinkedIn</button>
-                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10 hover:bg-white/10">Email</button>
+                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10">LinkedIn</button>
+                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10">Email</button>
                 </div>
             </div>
 
@@ -75,7 +68,7 @@
         <div class="md:col-span-8 space-y-6">
             <div class="glass p-8 rounded-3xl">
                 <h2 class="text-4xl font-bold mb-6 gradient-text">關於我</h2>
-                <div class="text-slate-400 leading-loose space-y-4">
+                <div class="text-slate-400 leading-loose">
                     <p>我是一位深耕教育現場八年的資深高中教師，致力於將嚴謹的<strong class="text-slate-200">法政邏輯</strong>與尖端的 <strong class="text-slate-200">AI 科技</strong>結合。目前擔任教育部 AI 閱卷專案顧問，協助優化大型語言模型在學術評量上的表現。</p>
                 </div>
             </div>
@@ -83,11 +76,11 @@
             <div class="glass-bright p-8 rounded-3xl">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
-                    <span class="text-sm font-bold text-sky-300 tracking-wider">AI 助理對話介面 (Gemini 1.5 Flash)</span>
+                    <span class="text-sm font-bold text-sky-300">AI 助理對話介面 (Gemini 1.5 Flash)</span>
                 </div>
 
-                <div class="text-[10px] text-slate-500 font-bold tracking-tighter mb-3">STEP 1 — 選擇 AI 個性</div>
-                <div class="persona-grid mb-8" id="personaGrid">
+                <div class="text-[10px] text-slate-500 font-bold mb-3">STEP 1 — 選擇 AI 個性</div>
+                <div class="persona-grid mb-8">
                     <div class="persona-btn active p-3 text-center" data-role="mentor" onclick="selectPersona(this)">
                         <div class="text-xl mb-1">🎓</div><div class="text-xs font-bold">智慧導師</div>
                     </div>
@@ -101,8 +94,8 @@
 
                 <div class="text-[10px] text-slate-500 font-bold mb-3">STEP 2 — 輸入 API Key</div>
                 <div class="flex gap-2 mb-2">
-                    <input type="password" id="apiKey" class="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:border-sky-500 outline-none" placeholder="AIza...">
-                    <button id="verifyBtn" onclick="verifyKey()" class="bg-sky-500/20 border border-sky-500/40 text-sky-300 px-6 py-2 rounded-xl text-sm hover:bg-sky-500/30 transition">驗證</button>
+                    <input type="password" id="apiKey" class="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-sky-500" placeholder="AIza...">
+                    <button id="verifyBtn" onclick="verifyKey()" class="bg-sky-500/20 border border-sky-500/40 text-sky-300 px-6 py-2 rounded-xl text-sm transition hover:bg-sky-500/30">驗證</button>
                 </div>
                 <div id="keyStatus" class="text-[11px] hidden px-3 py-1.5 rounded-lg mb-6"></div>
 
@@ -111,97 +104,4 @@
                     <div class="self-center text-[11px] text-slate-600 bg-white/5 px-4 py-1 rounded-full">請先完成 API Key 驗證</div>
                 </div>
                 
-                <div class="flex gap-2">
-                    <input type="text" id="chatInput" disabled onkeydown="if(event.key==='Enter')sendMsg()" class="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-sky-500 outline-none disabled:opacity-30" placeholder="輸入訊息...">
-                    <button id="sendBtn" disabled onclick="sendMsg()" class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-6 rounded-xl disabled:opacity-30"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const personas = {
-            mentor: "你是網頁主人的 AI 助理。主人是高中老師、法政碩士、AI 閱卷顧問。請以專業、有深度的導師風格回答。繁體中文。",
-            friend: "你是網頁主人的 AI 助理，用輕鬆、幽默的朋友口吻介紹主人。繁體中文。",
-            coach: "你是激勵型健體教練風格的 AI 助理：直白、有力，強調自律。繁體中文。"
-        };
-
-        let currentPersona = 'mentor';
-        let verified = false;
-
-        function selectPersona(el) {
-            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            currentPersona = el.dataset.role;
-        }
-
-        async function verifyKey() {
-            const key = document.getElementById('apiKey').value.trim();
-            const status = document.getElementById('keyStatus');
-            if(!key) return;
-            
-            status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-white/5 text-slate-400";
-            status.innerText = "⏳ 驗證中...";
-            
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-                const res = await fetch(url, {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({ contents:[{parts:[{text:'hi'}]}], generationConfig:{maxOutputTokens:5} })
-                });
-                const data = await res.json();
-                if (data.error) throw new Error(data.error.message);
-                
-                verified = true;
-                status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                status.innerText = "✓ 驗證成功！";
-                document.getElementById('chatInput').disabled = false;
-                document.getElementById('sendBtn').disabled = false;
-                document.getElementById('chatArea').innerHTML = "";
-                addBubble('ai', '你好！我是你的 AI 助理，請問有什麼我可以幫你的？');
-            } catch(e) {
-                status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-red-500/10 text-red-400 border border-red-500/20";
-                status.innerText = "✗ 失敗：" + e.message;
-            }
-        }
-
-        function addBubble(role, text) {
-            const area = document.getElementById('chatArea');
-            const div = document.createElement('div');
-            div.className = `p-4 text-sm leading-relaxed ${role === 'user' ? 'bubble-user text-white' : 'bubble-ai text-slate-300'}`;
-            div.textContent = text;
-            area.appendChild(div);
-            area.scrollTop = area.scrollHeight;
-        }
-
-        async function sendMsg() {
-            if(!verified) return;
-            const key = document.getElementById('apiKey').value.trim();
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            if(!text) return;
-            
-            input.value = "";
-            addBubble('user', text);
-            
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-                const res = await fetch(url, {
-                    method:'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body: JSON.stringify({
-                        contents: [{role:'user', parts:[{text}]}],
-                        systemInstruction: { parts:[{text: personas[currentPersona]}] }
-                    })
-                });
-                const data = await res.json();
-                if(data.error) throw new Error(data.error.message);
-                addBubble('ai', data.candidates[0].content.parts[0].text);
-            } catch(e) {
-                addBubble('ai', "錯誤：" + e.message);
-            }
-        }
-    </script>
-</body>
-</html>
+                <div class="
