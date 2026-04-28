@@ -7,53 +7,43 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
     <style>
-        body { 
-            background-color: #080f1e; 
-            color: #f0f4ff; 
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .bg-aurora {
-            position: fixed; inset: 0; z-index: -1;
-            background:
-                radial-gradient(ellipse 60% 40% at 20% 10%, rgba(56,189,248,0.1) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(129,140,248,0.1) 0%, transparent 70%);
-        }
+        body { background-color: #080f1e; color: #f0f4ff; font-family: system-ui, -apple-system, sans-serif; margin: 0; min-height: 100vh; }
+        .bg-aurora { position: fixed; inset: 0; z-index: -1; background: radial-gradient(ellipse 60% 40% at 20% 10%, rgba(56,189,248,0.1) 0%, transparent 70%), radial-gradient(ellipse 50% 50% at 80% 80%, rgba(129,140,248,0.1) 0%, transparent 70%); }
         .glass { background: rgba(15, 25, 50, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
         .glass-bright { background: rgba(20, 32, 65, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(56,189,248,0.2); }
         .gradient-text { background: linear-gradient(95deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .chat-area { height: 300px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #38bdf8 rgba(255,255,255,0.05); }
         .bubble-ai { align-self: flex-start; background: rgba(30,41,80,0.9); border-radius: 4px 16px 16px 16px; border: 1px solid rgba(56,189,248,0.2); }
         .bubble-user { align-self: flex-end; background: linear-gradient(135deg, #1e40af, #1e3a8a); border-radius: 16px 4px 16px 16px; }
-        .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .persona-btn { cursor: pointer; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
-        .persona-btn.active { border-color: #38bdf8; background: rgba(56,189,248,0.15); color: #7dd3fc; }
+        
+        /* 人格按鈕調整為兩列排版，確保手機版也好選 */
+        .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .persona-btn { cursor: pointer; border-radius: 15px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
+        .persona-btn:hover { background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.3); }
+        .persona-btn.active { border-color: #38bdf8; background: rgba(56,189,248,0.15); box-shadow: 0 0 15px rgba(56,189,248,0.2); }
+        
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 0; } 100% { transform: scale(1.1); opacity: 0; } }
         .animate-ring { animation: pulse-ring 2.5s infinite; }
     </style>
 </head>
 <body class="p-4 md:p-10">
     <div class="bg-aurora"></div>
-    
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10">
         <div class="md:col-span-4 space-y-6">
-            <div class="glass p-8 rounded-3xl text-center shadow-2xl">
+            <div class="glass p-8 rounded-3xl text-center">
                 <div class="relative inline-block mb-6">
-                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white">
                         <i class="fas fa-user-graduate text-4xl"></i>
                     </div>
                     <div class="absolute inset-[-6px] border-2 border-sky-500/30 rounded-full animate-ring"></div>
                 </div>
                 <h1 class="text-2xl font-bold mb-1">教育與 AI 專家</h1>
-                <p class="text-sky-400 text-sm mb-6 font-medium">法政碩士 ｜ AI 閱卷顧問</p>
+                <p class="text-sky-400 text-sm mb-6">法政碩士 ｜ AI 閱卷顧問</p>
                 <div class="flex justify-center gap-3">
-                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10 hover:bg-white/10 transition">LinkedIn</button>
-                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10 hover:bg-white/10 transition">Email</button>
+                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10">LinkedIn</button>
+                    <button class="px-4 py-1.5 bg-white/5 rounded-full text-xs border border-white/10">Email</button>
                 </div>
             </div>
-
             <div class="glass p-6 rounded-3xl shadow-xl">
                 <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">專業領域</h2>
                 <ul class="space-y-3 text-sm text-slate-300">
@@ -68,45 +58,52 @@
         <div class="md:col-span-8 space-y-6">
             <div class="glass p-8 rounded-3xl shadow-xl">
                 <h2 class="text-4xl font-bold mb-6 gradient-text">關於我</h2>
-                <div class="text-slate-300 leading-loose text-base">
-                    <p>我是一位深耕教育現場八年的資深高中教師，致力於將嚴謹的<strong class="text-sky-400">法政邏輯</strong>與尖端的 <strong class="text-indigo-400">AI 科技</strong>結合。目前擔任教育部 AI 閱卷專案顧問，協助優化大型語言模型在學術評量上的表現。</p>
-                </div>
+                <p class="text-slate-300 leading-loose">我是一位深耕教育現場八年的資深高中教師，致力於將嚴謹的<strong class="text-sky-400">法政邏輯</strong>與尖端的 <strong class="text-indigo-400">AI 科技</strong>結合。目前擔任教育部 AI 閱卷專案顧問，協助優化大型語言模型在學術評量上的表現。</p>
             </div>
 
             <div class="glass-bright p-8 rounded-3xl shadow-2xl">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
-                    <span class="text-sm font-bold text-sky-300 uppercase tracking-wider">AI 助理對話介面 (v1 Stable)</span>
+                    <span class="text-sm font-bold text-sky-300">AI 助理 (v1 Stable Mode)</span>
                 </div>
 
-                <div class="text-[10px] text-slate-500 font-bold mb-3 tracking-widest">STEP 1 — 選擇 AI 個性</div>
-                <div class="persona-grid mb-8">
-                    <div class="persona-btn active p-3 text-center" data-role="mentor" onclick="selectPersona(this)">
-                        <div class="text-xl mb-1">🎓</div><div class="text-xs font-bold">智慧導師</div>
+                <div class="text-[10px] text-slate-500 font-bold mb-3 tracking-widest uppercase">Step 1 — 選擇對話風格 (六種模式)</div>
+                <div class="persona-grid mb-8" id="personaGrid">
+                    <div class="persona-btn active p-3" data-role="mentor" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">🎓</div><div class="text-[11px] font-bold">智慧導師</div>
                     </div>
-                    <div class="persona-btn p-3 text-center" data-role="friend" onclick="selectPersona(this)">
-                        <div class="text-xl mb-1">☕</div><div class="text-xs font-bold">輕鬆朋友</div>
+                    <div class="persona-btn p-3" data-role="friend" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">☕</div><div class="text-[11px] font-bold">輕鬆朋友</div>
                     </div>
-                    <div class="persona-btn p-3 text-center" data-role="coach" onclick="selectPersona(this)">
-                        <div class="text-xl mb-1">💪</div><div class="text-xs font-bold">健體教練</div>
+                    <div class="persona-btn p-3" data-role="socrates" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">🏛️</div><div class="text-[11px] font-bold">蘇格拉底</div>
+                    </div>
+                    <div class="persona-btn p-3" data-role="poet" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">🌸</div><div class="text-[11px] font-bold">浪漫詩人</div>
+                    </div>
+                    <div class="persona-btn p-3" data-role="coach" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">💪</div><div class="text-[11px] font-bold">健體教練</div>
+                    </div>
+                    <div class="persona-btn p-3" data-role="legal" onclick="selectPersona(this)">
+                        <div class="text-xl mb-1">⚖️</div><div class="text-[11px] font-bold">法律顧問</div>
                     </div>
                 </div>
 
-                <div class="text-[10px] text-slate-500 font-bold mb-3 tracking-widest">STEP 2 — 輸入 API Key</div>
+                <div class="text-[10px] text-slate-500 font-bold mb-3 tracking-widest uppercase">Step 2 — 驗證金鑰</div>
                 <div class="flex gap-2 mb-2">
-                    <input type="password" id="apiKey" class="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-sky-500 transition" placeholder="在此輸入 AIza... 開頭的金鑰">
+                    <input type="password" id="apiKey" class="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-sky-500" placeholder="輸入 AIza... 金鑰">
                     <button id="verifyBtn" onclick="verifyKey()" class="bg-sky-500/20 border border-sky-500/40 text-sky-300 px-6 py-2 rounded-xl text-sm transition hover:bg-sky-500/30">驗證</button>
                 </div>
                 <div id="keyStatus" class="text-[11px] hidden px-3 py-1.5 rounded-lg mb-6"></div>
 
-                <div class="text-[10px] text-slate-500 font-bold mb-3 tracking-widest">STEP 3 — 開始提問</div>
+                <div class="text-[10px] text-slate-500 font-bold mb-3 tracking-widest uppercase">Step 3 — 開始聊聊</div>
                 <div id="chatArea" class="chat-area flex flex-col gap-4 p-2 mb-4">
-                    <div class="self-center text-[11px] text-slate-600 bg-white/5 px-4 py-1 rounded-full italic">請先完成 API Key 驗證以開啟對話</div>
+                    <div class="self-center text-[11px] text-slate-600 bg-white/5 px-4 py-1 rounded-full">驗證後即可與不同個性的 AI 對話</div>
                 </div>
                 
                 <div class="flex gap-2">
-                    <input type="text" id="chatInput" disabled onkeydown="if(event.key==='Enter')sendMsg()" class="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-sky-500 disabled:opacity-30" placeholder="詢問關於主人的背景或專案...">
-                    <button id="sendBtn" disabled onclick="sendMsg()" class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-6 rounded-xl disabled:opacity-30 transition transform active:scale-95"><i class="fas fa-paper-plane"></i></button>
+                    <input type="text" id="chatInput" disabled onkeydown="if(event.key==='Enter')sendMsg()" class="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-sky-500 disabled:opacity-30" placeholder="輸入你的問題...">
+                    <button id="sendBtn" disabled onclick="sendMsg()" class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-6 rounded-xl disabled:opacity-30 active:scale-95 transition"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -115,16 +112,22 @@
     <script>
         const personas = {
             mentor: "你現在是網頁主人的 AI 專屬助理。主人是一位擁有八年資歷的高中老師、法政碩士、也是教育部 AI 閱卷顧問。請以專業、溫和、有深度的導師風格介紹主人的背景。回答請使用繁體中文。",
-            friend: "你現在是網頁主人的 AI 助理。請用輕鬆、親切、像好朋友聊天一樣的口吻，幽默地向訪客介紹主人（高中老師、AI 顧問、健體愛好者）。回答請使用繁體中文。",
-            coach: "你現在是激勵型健體教練風格的 AI 助理。講話直白、熱血、充滿正能量，強調主人的自律與執行力。回答請使用繁體中文，多用驚嘆號。"
+            friend: "你現在是網頁主人的 AI 助理。請用輕鬆、親切、像好朋友聊天一樣的口吻，幽默地向訪客介紹主人。回答請使用繁體中文。",
+            socrates: "你現在是蘇格拉底風格的 AI 助理。請不要直接給答案，而是透過連續的反問句，引導訪客思考並發現主人的專業價值。回答請使用繁體中文。",
+            poet: "你現在是浪漫詩人風格的 AI 助理。請用優美、押韻、充滿意象的文字來介紹主人的法政與 AI 專業。回答請使用繁體中文。",
+            coach: "你現在是激勵型健體教練風格的 AI 助理。講話直白、熱血、充滿正能量，多用驚嘆號，強調自律。回答請使用繁體中文。",
+            legal: "你現在是嚴謹法律顧問風格的 AI 助理。請用邏輯嚴密、條理分明、引用法政思維的方式介紹主人。回答請使用繁體中文。"
         };
 
         let currentPersona = 'mentor';
         let verified = false;
 
         function selectPersona(el) {
-            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+            // 清除所有按鈕的 active 狀態
+            document.querySelectorAll('.persona-btn').forEach(btn => btn.classList.remove('active'));
+            // 為點擊的按鈕加上 active
             el.classList.add('active');
+            // 更新目前角色
             currentPersona = el.dataset.role;
         }
 
@@ -132,31 +135,23 @@
             const key = document.getElementById('apiKey').value.trim();
             const status = document.getElementById('keyStatus');
             if(!key) return;
-            
             status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-white/5 text-slate-400";
-            status.innerText = "⏳ 正在透過 v1 介面驗證金鑰...";
-            
+            status.innerText = "⏳ 驗證中...";
             try {
-                // 改用正式版 v1 網址
                 const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
-                const res = await fetch(url, {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({ contents:[{parts:[{text:'ping'}]}] })
-                });
+                const res = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents:[{parts:[{text:'ping'}]}] }) });
                 const data = await res.json();
                 if (data.error) throw new Error(data.error.message);
-                
                 verified = true;
                 status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                status.innerText = "✓ 驗證成功！AI 助理已就緒。";
+                status.innerText = "✓ 驗證成功！";
                 document.getElementById('chatInput').disabled = false;
                 document.getElementById('sendBtn').disabled = false;
                 document.getElementById('chatArea').innerHTML = "";
-                addBubble('ai', '你好！我是主人的 AI 助理。你可以問我關於主人的法政背景、AI 閱卷專案，或是健身心得喔！');
+                addBubble('ai', '你好！我是主人的 AI 助理，請選擇你喜歡的風格後對話吧！');
             } catch(e) {
                 status.className = "text-[11px] block px-3 py-1.5 rounded-lg mb-6 bg-red-500/10 text-red-400 border border-red-500/20";
-                status.innerText = "✗ 驗證失敗：" + e.message;
+                status.innerText = "✗ 失敗：" + e.message;
             }
         }
 
@@ -175,31 +170,17 @@
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if(!text) return;
-            
             input.value = "";
             addBubble('user', text);
-            
             try {
-                // 統一使用 v1 正式版路徑
                 const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
-                
-                // 將指令與問題合併傳送，這在 v1 版本最穩定
                 const finalPrompt = `${personas[currentPersona]}\n\n訪客詢問：${text}`;
-
-                const res = await fetch(url, {
-                    method:'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body: JSON.stringify({
-                        contents: [{role:'user', parts:[{text: finalPrompt}]}]
-                    })
-                });
+                const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{role:'user', parts:[{text: finalPrompt}]}] }) });
                 const data = await res.json();
                 if(data.error) throw new Error(data.error.message);
-                
-                const aiText = data.candidates[0].content.parts[0].text;
-                addBubble('ai', aiText);
+                addBubble('ai', data.candidates[0].content.parts[0].text);
             } catch(e) {
-                addBubble('ai', "發生連線錯誤：" + e.message);
+                addBubble('ai', "連線錯誤：" + e.message);
             }
         }
     </script>
