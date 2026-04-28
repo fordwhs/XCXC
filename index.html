@@ -119,3 +119,173 @@
                 <span class="tag"><i class="fas fa-envelope mr-1"></i>Email</span>
             </div>
         </div>
+
+        <div class="glass p-5 rounded-2xl">
+            <h2 style="font-size:14px;font-weight:600;color:#94a3b8;letter-spacing:0.05em;" class="mb-3 uppercase">專業領域</h2>
+            <ul class="space-y-2" style="font-size:13px;color:#cbd5e1;">
+                <li><span style="color:#38bdf8;">▹</span> 八年高中教學實務</li>
+                <li><span style="color:#818cf8;">▹</span> LLM 訓練與 RLHF 優化</li>
+                <li><span style="color:#38bdf8;">▹</span> 法政邏輯與跨域整合</li>
+                <li><span style="color:#818cf8;">▹</span> 健體訓練與自律管理</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="md:col-span-2 space-y-5">
+        <div class="glass p-7 rounded-2xl">
+            <h2 class="text-3xl font-bold mb-4 gradient-text" style="font-family:Georgia,serif;">跨域領航者：關於我</h2>
+            <div style="font-size:14px;color:#94a3b8;line-height:1.9;" class="space-y-3">
+                <p>我是一位深耕教育現場八年的資深高中教師，致力於將嚴謹的<span style="color:#e2e8f0;font-weight:600;">法政邏輯</span>與尖端的 <span style="color:#e2e8f0;font-weight:600;">AI 科技</span>結合。目前擔任教育部 AI 閱卷專案顧問，協助優化大型語言模型在學術評量上的表現。</p>
+                <p>我擅長運用 Firebase 與 Gemini API 開發教育工具；在生活端，七年的健體訓練資歷賦予我強大的執行力與自律心。</p>
+            </div>
+        </div>
+
+        <div class="glass-bright p-6 rounded-2xl" style="border-top: 2px solid rgba(56,189,248,0.3);">
+            <div class="flex items-center gap-2 mb-4">
+                <div style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></div>
+                <span style="font-size:13px;font-weight:600;color:#7dd3fc;">AI 助理對話介面 (Powered by Gemini 1.5 Flash)</span>
+            </div>
+
+            <div style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:8px;">STEP 1 — 選擇 AI 個性</div>
+            <div class="persona-grid" id="personaGrid">
+                <div class="persona-btn active" data-role="mentor" onclick="selectPersona(this)">
+                    <span class="icon">🎓</span><span class="name">智慧導師</span><span>專業深度</span>
+                </div>
+                <div class="persona-btn" data-role="friend" onclick="selectPersona(this)">
+                    <span class="icon">☕</span><span class="name">輕鬆朋友</span><span>親切幽默</span>
+                </div>
+                <div class="persona-btn" data-role="socrates" onclick="selectPersona(this)">
+                    <span class="icon">🏛</span><span class="name">蘇格拉底</span><span>反問引導</span>
+                </div>
+                <div class="persona-btn" data-role="poet" onclick="selectPersona(this)">
+                    <span class="icon">🌸</span><span class="name">浪漫詩人</span><span>押韻感性</span>
+                </div>
+                <div class="persona-btn" data-role="coach" onclick="selectPersona(this)">
+                    <span class="icon">💪</span><span class="name">健體教練</span><span>激勵直白</span>
+                </div>
+                <div class="persona-btn" data-role="legal" onclick="selectPersona(this)">
+                    <span class="icon">⚖️</span><span class="name">法律顧問</span><span>嚴謹邏輯</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:8px;">STEP 2 — 輸入 Gemini API Key</div>
+            <div class="key-row">
+                <input type="password" id="apiKey" class="key-input" placeholder="AIza…" />
+                <button class="btn-verify" id="verifyBtn" onclick="verifyKey()">驗證</button>
+            </div>
+            <div id="keyStatus" class="key-status"></div>
+
+            <div class="divider"></div>
+
+            <div style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:10px;">STEP 3 — 開始提問</div>
+            <div class="chat-area" id="chatArea">
+                <div class="bubble-system">請先驗證 API Key 以開啟對話</div>
+            </div>
+            <div class="send-row flex gap-2 mt-4">
+                <input type="text" id="chatInput" class="chat-input" placeholder="問問關於我的專案..." disabled onkeydown="if(event.key==='Enter')sendMsg()" />
+                <button class="btn-send" id="sendBtn" onclick="sendMsg()" disabled><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const personas = {
+    mentor: "你是網頁主人的 AI 助理。主人是有八年經驗的高中老師、法政碩士、教育部 AI 閱卷顧問。請以專業、有深度的智慧導師風格回答。繁體中文。",
+    friend: "你是網頁主人的 AI 助理，用輕鬆、親切、幽默的朋友口吻介紹主人。繁體中文，語氣像聊天。",
+    socrates: "你是蘇格拉底風格的 AI 助理：不直接給答案，只用反問句引導訪客思考主人的專業。繁體中文。",
+    poet: "你是浪漫詩人 AI 助理，回答必須押韻，充滿比喻，介紹主人的教育與 AI 專業。繁體中文。",
+    coach: "你是激勵型健體教練風格的 AI 助理：直白、有力，多用驚嘆號，強調主人的自律。繁體中文。",
+    legal: "你是嚴謹法律顧問 AI 助理，引用邏輯框架與條理分明的論述介紹主人。繁體中文。"
+};
+
+let currentPersona = 'mentor';
+let verified = false;
+
+function selectPersona(el) {
+    document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    currentPersona = el.dataset.role;
+}
+
+function setStatus(cls, html) {
+    const el = document.getElementById('keyStatus');
+    el.className = 'key-status ' + cls;
+    el.innerHTML = html;
+}
+
+async function verifyKey() {
+    const key = document.getElementById('apiKey').value.trim();
+    if (!key) { setStatus('key-err', '請輸入 Key'); return; }
+    document.getElementById('verifyBtn').disabled = true;
+    setStatus('key-loading', '⏳ 驗證中...');
+    try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ contents:[{parts:[{text:'hi'}]}], generationConfig:{maxOutputTokens:5} })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+        verified = true;
+        setStatus('key-ok', '✓ 驗證成功！');
+        document.getElementById('chatInput').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        document.getElementById('chatArea').innerHTML = "";
+        addBubble('ai', '你好！我是 AI 助理，已準備好為你服務。');
+    } catch(e) {
+        setStatus('key-err', '✗ 失敗：' + (e.message.includes('quota') ? '配額不足，請換個帳號申請 Key。' : e.message));
+    } finally { document.getElementById('verifyBtn').disabled = false; }
+}
+
+function addBubble(role, text) {
+    const area = document.getElementById('chatArea');
+    const div = document.createElement('div');
+    div.className = role === 'user' ? 'bubble-user' : 'bubble-ai';
+    div.textContent = text;
+    area.appendChild(div);
+    area.scrollTop = area.scrollHeight;
+}
+
+async function sendMsg() {
+    if (!verified) return;
+    const key = document.getElementById('apiKey').value.trim();
+    const text = document.getElementById('chatInput').value.trim();
+    if (!text) return;
+    document.getElementById('chatInput').value = '';
+    addBubble('user', text);
+    
+    // 顯示打字中
+    const area = document.getElementById('chatArea');
+    const typing = document.createElement('div');
+    typing.className = 'bubble-ai';
+    typing.id = 'typing';
+    typing.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+    area.appendChild(typing);
+    area.scrollTop = area.scrollHeight;
+
+    try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+        const res = await fetch(url, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+                contents: [{role:'user', parts:[{text}]}],
+                systemInstruction: { parts:[{text: personas[currentPersona]}] }
+            })
+        });
+        const data = await res.json();
+        document.getElementById('typing').remove();
+        if (data.error) throw new Error(data.error.message);
+        addBubble('ai', data.candidates[0].content.parts[0].text);
+    } catch(e) {
+        if(document.getElementById('typing')) document.getElementById('typing').remove();
+        addBubble('ai', '⚠ 錯誤：' + e.message);
+    }
+}
+</script>
+</body>
+</html>
